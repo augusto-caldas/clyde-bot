@@ -2,7 +2,6 @@
 import discord
 import aiohttp
 
-DISCORD_TOKEN = ""
 API_URL = 'http://localhost:8000/v1/chat/completions'
 with open("tokens.txt", "r") as tokens:
     DISCORD_TOKEN = tokens.readline().strip()
@@ -10,36 +9,34 @@ with open("tokens.txt", "r") as tokens:
 # Bot setup
 intents = discord.Intents.default()
 intents.message_content = True
-client = discord.Client(intents=intents)
+bot = discord.Client(intents=intents)
 
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f"Bot is online and running as >> {client.user}")
+    print(f"Bot is online and running as >> {bot.user}")
 
 
-@client.event
+@bot.event
 async def on_message(message):
     # Ignore messages sent by the bot itself
-    if message.author == client.user:
+    if message.author == bot.user:
         return
 
-    bot_name = client.user.name.lower()
-
     # Check if the bot is mentioned or its name is in the message content
-    mentioned = client.user.mentioned_in(message)
-    name_in_message = bot_name in message.content.lower()
-
-    if mentioned or name_in_message:
+    bot_name = bot.user.name.lower()
+    is_mentioned = bot.user.mentioned_in(message)
+    is_name_in_message = bot_name in message.content.lower()
+    if is_mentioned or is_name_in_message:
         await message.channel.typing()
-        user_prompt = message.content.replace(f"<@{client.user.id}>", "").strip()
+        print("Message from user >> " + message.clean_content)
 
         try:
             headers = {"Content-Type": "application/json"}
             payload = {
                 "model": "llama",
                 "messages": [
-                    {"role": "user", "content": user_prompt}
+                    {"role": "user", "content": message}
                 ]
             }
 
@@ -48,13 +45,14 @@ async def on_message(message):
                     if resp.status == 200:
                         data = await resp.json()
                         reply = data['choices'][0]['message']['content'].strip()
+                        # Send the bot reply back
+                        print(f"Reply from bot >> {reply}")
+                        await message.channel.send(reply)
                     else:
-                        reply = f"Error: LLaMA API returned {resp.status}"
+                        print(f"Error, bot returned >> {resp.status}")
         except Exception as e:
-            reply = f"Failed to connect to LLaMA: {e}"
-
-        await message.channel.send(reply)
+            print(f"Failed to connect to bot >> {e}")
 
 
 # Run bot
-client.run(DISCORD_TOKEN)
+bot.run(DISCORD_TOKEN)

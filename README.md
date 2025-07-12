@@ -1,5 +1,5 @@
 # clyde-bot
-Setting up bot:<br>
-  - Create a tokens.txt file where:<br>
-    - First line have the discord bot token<br>
-  - Have the llama model running locally
+Setting up bot:
+  - Create a tokens.txt file where:
+    - The first line has the discord bot token
+  - Have the desired bot in the models directory
