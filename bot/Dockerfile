@@ -1,7 +1,10 @@
-FROM python:3.12-slim
+FROM python:3.12
 
 WORKDIR /app
-COPY main.py requirements.txt tokens.txt ./
+
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+COPY main.py tokens.txt system_input.txt ./
 
 CMD ["python", "main.py"]

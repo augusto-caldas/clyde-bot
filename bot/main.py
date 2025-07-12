@@ -6,6 +6,9 @@ API_URL = 'http://localhost:8000/v1/chat/completions'
 with open("tokens.txt", "r") as tokens:
     DISCORD_TOKEN = tokens.readline().strip()
 
+with open("system_input.txt", "r") as system_input:
+    SYSTEM_INPUT = system_input.readline().strip()
+
 # Bot setup
 intents = discord.Intents.default()
 intents.message_content = True
@@ -28,18 +31,19 @@ async def on_message(message):
     is_mentioned = bot.user.mentioned_in(message)
     is_name_in_message = bot_name in message.content.lower()
     if is_mentioned or is_name_in_message:
-        await message.channel.typing()
-        print("Message from user >> " + message.clean_content)
+        print(f"Message from {message.author} >> {message.clean_content}")
 
         try:
             headers = {"Content-Type": "application/json"}
             payload = {
                 "model": "llama",
                 "messages": [
-                    {"role": "user", "content": message}
+                    {"role": "system", "content": SYSTEM_INPUT},
+                    {"role": "user", "content": message.clean_content}
                 ]
             }
 
+            await message.channel.typing()
             async with aiohttp.ClientSession() as session:
                 async with session.post(API_URL, json=payload, headers=headers) as resp:
                     if resp.status == 200:
