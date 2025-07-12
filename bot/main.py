@@ -29,38 +29,40 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    # Ignore messages sent by the bot itself
     if message.author == bot.user:
         return
 
-    # Check if the bot is mentioned or its name is in the message content
     bot_name = bot.user.name.lower()
     is_mentioned = bot.user.mentioned_in(message)
     is_name_in_message = bot_name in message.content.lower()
+
     if is_mentioned or is_name_in_message:
         print(f"Message from {message.author} >> {message.clean_content}")
 
-        try:
-            headers = {"Content-Type": "application/json"}
-            payload = {
-                "model": "llama",
-                "messages": [
-                    {"role": "system", "content": SYSTEM_INPUT},
-                    {"role": "user", "content": message.clean_content}
-                ]
-            }
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "model": "llama",
+            "messages": [
+                {"role": "system", "content": SYSTEM_INPUT},
+                {"role": "user", "content": message.clean_content}
+            ]
+        }
 
-            await message.channel.typing()
-            async with aiohttp.ClientSession() as session:
-                async with session.post(API_URL, json=payload, headers=headers) as resp:
-                    if resp.status == 200:
-                        data = await resp.json()
-                        reply = data['choices'][0]['message']['content'].strip()
-                        # Send the bot reply back
-                        print(f"Reply from bot >> {reply}")
-                        await message.channel.send(reply)
-                    else:
-                        print(f"Error, bot returned >> {resp.status}")
+        try:
+            async with message.channel.typing():
+                async with aiohttp.ClientSession() as session:
+                    async with session.post(API_URL, json=payload, headers=headers) as resp:
+                        if resp.status == 200:
+                            data = await resp.json()
+                            reply = data['choices'][0]['message']['content'].strip()
+                            print(f"Reply from bot >> {reply}")
+                            await message.channel.send(
+                                reply,
+                                reference=message.to_reference(),
+                                mention_author=False
+                            )
+                        else:
+                            print(f"Error, bot returned >> {resp.status}")
         except Exception as e:
             print(f"Failed to connect to bot >> {e}")
 
