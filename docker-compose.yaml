@@ -18,6 +18,4 @@ services:
     container_name: clyde-bot
     depends_on:
       - llama
-    environment:
-      - PYTHONUNBUFFERED=1
     restart: unless-stopped
