@@ -13,9 +13,9 @@ services:
       - CONFIG_FILE=/data/config.json
     restart: unless-stopped
 
-  discord-bot:
+  clyde-bot:
     build: ./bot
-    container_name: discord-bot
+    container_name: clyde-bot
     depends_on:
       - llama
     environment:
