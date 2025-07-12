@@ -2,7 +2,7 @@
 import discord
 import aiohttp
 
-API_URL = 'http://localhost:8000/v1/chat/completions'
+API_URL = 'http://llama:8000/v1/chat/completions'
 try:
     with open("tokens.txt", "r") as tokens:
         DISCORD_TOKEN = tokens.readline().strip()
