@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  llama:
+    image: ghcr.io/allenporter/llama-cpp-server-cpu:latest
+    container_name: llama-cpp
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/data/models
+      - ./config.json:/data/config.json
+    environment:
+      - CONFIG_FILE=/data/config.json
+    restart: unless-stopped
+
+  discord-bot:
+    build: ./bot
+    container_name: discord-bot
+    depends_on:
+      - llama
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
