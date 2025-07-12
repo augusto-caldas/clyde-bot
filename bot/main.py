@@ -3,11 +3,18 @@ import discord
 import aiohttp
 
 API_URL = 'http://localhost:8000/v1/chat/completions'
-with open("tokens.txt", "r") as tokens:
-    DISCORD_TOKEN = tokens.readline().strip()
+try:
+    with open("tokens.txt", "r") as tokens:
+        DISCORD_TOKEN = tokens.readline().strip()
+except OSError:
+    exit("Error: tokens.txt file not found.\nPlease create the file and add your discord bot token in the first line.")
 
-with open("system_input.txt", "r") as system_input:
-    SYSTEM_INPUT = system_input.readline().strip()
+try:
+    with open("system_input.txt", "r") as system_input:
+        SYSTEM_INPUT = system_input.readline().strip()
+except OSError:
+    print("Warning: system_input.txt file not found.\nSetting empty system input.")
+    SYSTEM_INPUT = ""
 
 # Bot setup
 intents = discord.Intents.default()

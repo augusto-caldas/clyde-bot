@@ -1,4 +1,4 @@
 .idea
 models/*
-bot/tokens.txt
-bot/system_input.txt
+tokens.txt
+system_input.txt
