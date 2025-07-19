@@ -1,4 +1,4 @@
-# Version: 0.1
+# Version: 0.3
 import discord
 import aiohttp
 
