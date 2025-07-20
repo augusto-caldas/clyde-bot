@@ -29,10 +29,10 @@ bot = discord.Client(intents=intents)
 
 # Format chat history in one string
 def format_chat_history():
-    chat_history = "Previous messages: "
+    chat_history = "Previous messages:\n"
     for i in range(len(USER_CHAT_HISTORY_QUEUE)):
-        chat_history += f"User message: {USER_CHAT_HISTORY_QUEUE[i]}"
-        chat_history += f"Bot response: {BOT_CHAT_HISTORY_QUEUE[i]}"
+        chat_history += f"User message: {USER_CHAT_HISTORY_QUEUE[i]}\n"
+        chat_history += f"Bot response: {BOT_CHAT_HISTORY_QUEUE[i]}\n"
     return chat_history
 
 
